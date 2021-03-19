@@ -9,13 +9,23 @@ function addContentToTable(table, columns, ...data) {
 	while (cellCount < cells.length) {
 		// create and append a row:
 		let tr = document.createElement('tr');
-		table.append(tr);
+		table.tBodies[0].append(tr);
 		// for every column create a cell on that row:
 		for (i = 1; i <= columns; i++) {
 			let td = document.createElement('td');
 			td.textContent = cells[cellCount];
 			tr.append(td);
 			cellCount++
+		}
+	}
+}
+
+function queryTableGetRow(table, query) {
+	for (row of table.tBodies[0].children) {
+		for (cell of row.children) {
+			if (cell.textContent === query) {
+				return row;
+			}
 		}
 	}
 }
@@ -49,12 +59,24 @@ function handleQueryField(table) {
 		if (evt.key === "Enter") {
 			try {
 				let query = evt.target.value;
+				// --- search keys for query
 				let result = deEnStorage.getItem(query);
-				if (!result) { 
-					result = 'nothing found';
-					table.textContent = result;
+				if (result) {
+					//addContentToTable(table, 2, query, result);
+					let cellMatch = queryTableGetRow(table, query);
+					cellMatch.style.backgroundColor = "orange";
 				} else {
-					addContentToTable(table, 2, query, result);
+					// --- search values if no matching key found
+					for (key in deEnStorage) {
+						//result = (deEnStorage[key] === query) ? key : undefined
+						if (deEnStorage[key] === query) {
+							result = key;
+							//addContentToTable(table, 2, result, query);
+							isolateContentInTable(table, query);
+						} else {
+							result = 'nothing found';
+						}
+					}					
 				}
 			}
 			catch (err) {
@@ -66,8 +88,8 @@ function handleQueryField(table) {
 
 function handleRemoveLastEntry(table, storage) {
 	return function(evt) {
-		let valueOfLastEntry = vocTable.lastElementChild.cells[0].textContent;
-		table.lastElementChild.remove();
+		let valueOfLastEntry = table.tBodies[0].lastElementChild.cells[0].textContent;
+		table.tBodies[0].lastElementChild.remove();
 		storage.removeItem(valueOfLastEntry);
 	}
 }
