@@ -19,6 +19,7 @@ function addContentToTable(table, columns, ...data) {
 		}
 	}
 }
+// testing
 
 function queryTableGetRow(table, query) {
 	for (row of table.tBodies[0].children) {
