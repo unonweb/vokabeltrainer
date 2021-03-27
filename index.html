@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
         <title>Vokabeltrainer</title>
-        <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="white"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="js/main.js" defer></script>
@@ -12,33 +11,36 @@
     </head>
     <body>
         <header class="shadow">
-            <img src="https://images.unsplash.com/photo-1495648013863-7f0f0f7b14a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDI1fHxsYW5ndWFnZXN8ZW58MHx8fHwxNjE2MTQ5MDE2&ixlib=rb-1.2.1&q=80&w=1080" style="width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; border-width: 0px; border-style: solid;"/>
+            <img src="https://images.unsplash.com/photo-1495648013863-7f0f0f7b14a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDI1fHxsYW5ndWFnZXN8ZW58MHx8fHwxNjE2MTQ5MDE2&ixlib=rb-1.2.1&q=80&w=1080"/>
         </header>
         <main class="shadow">
-            <section id="input" style="grid-area:1 / 1 / 2 / 2;">
+            <form action="">
                 <label for="de">Deutsch: </label>
                 <input id="de" type="text">
+            </form>
+            <form action="">
                 <label for="en">Englisch: </label>
                 <input id="en" type="text">
-                <output id="mirror-in"></output>
-            </section>
+                <button id="get-def" type="button">Get definition</button>
+            </form>
+            <output id="output"></output>
         </main>
         <footer class="shadow">
             <p>Vokabeltrainer. Beta. Unonweb.</p>
         </footer>
-        <aside style="grid-area:aside;" class="shadow">
+        <aside class="shadow">
             <button id="remove-last" type="button">remove last entry</button>
             <label for="query">Search entry: </label>
             <input id="query" class="popup-anchor" type="text">
             <table id="voc-table">
-				<thead>
-					<tr>
-						<th>Deutsch</th>
-						<th>Englisch</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
+                <thead>
+                    <tr>
+                        <th>Deutsch</th>
+                        <th>Englisch</th>
+                    </tr>
+                </thead>
+                <tbody>
+</tbody>
             </table>
         </aside>
     </body>
