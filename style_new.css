@@ -100,3 +100,10 @@ header > img {
     border-width: 0px;
     border-style: solid;
 }
+
+output {
+    font-style: italic;
+    color: #b46868;
+    margin-bottom: 20px;
+    display: none;
+}
