@@ -19,7 +19,6 @@ function addContentToTable(table, columns, ...data) {
 		}
 	}
 }
-// testing
 
 function queryTableGetRow(table, query) {
 	for (row of table.tBodies[0].children) {
@@ -72,8 +71,8 @@ function handleQueryField(table) {
 						//result = (deEnStorage[key] === query) ? key : undefined
 						if (deEnStorage[key] === query) {
 							result = key;
-							//addContentToTable(table, 2, result, query);
-							isolateContentInTable(table, query);
+							let cellMatch = queryTableGetRow(table, query);
+							cellMatch.style.backgroundColor = "orange";
 						} else {
 							result = 'nothing found';
 						}
@@ -89,17 +88,40 @@ function handleQueryField(table) {
 
 function handleRemoveLastEntry(table, storage) {
 	return function(evt) {
+		console.log('remove button clicked');
 		let valueOfLastEntry = table.tBodies[0].lastElementChild.cells[0].textContent;
 		table.tBodies[0].lastElementChild.remove();
 		storage.removeItem(valueOfLastEntry);
 	}
 }
 
-function addEventListeners() {
-	removeLastBtn.onclick = handleRemoveLastEntry(vocTable, deEnStorage);
-	queryField.onkeydown = handleQueryField(vocTable);
-	deField.onkeydown = handleInputFields(vocTable);
-	enField.onkeydown = handleInputFields(vocTable);
+function getDef(inputEl, outputEl) {
+	return function(evt) {
+		
+		// url
+		let word = inputEl.value;
+		let url = new URL(`https://owlbot.info/api/v4/dictionary/${word}`);
+		//url.search = '?l=deen&q=house';
+		// headers
+		let reqHeaders = new Headers();
+		reqHeaders.append("Authorization", "Token a538a3211dc031d3847a2c70484fc8b32ab0d9eb");
+		// request
+		//let req = new Request(url, reqOptions);
+		// fetch
+		fetch(url, {headers: reqHeaders})
+			.then(response => {
+				//if (!response.ok) throw new Error(`Failed to fetch: ${response}`);
+				console.log('response.type: ', response.type);
+				return response.json()
+			})
+			.then(data => {
+				let def = data.definitions[0].definition;
+				outputEl.textContent = def;
+			})
+			.catch(err => {
+				console.warn(err.stack);
+			})
+	}
 }
 
 function showPopUp() {
@@ -113,12 +135,20 @@ function showPopUp() {
 let mainEl = document.querySelector('main');
 let deField = document.getElementById('de');
 let enField = document.getElementById('en')
-//let vocTable = document.getElementById('feedback-table');
 let removeLastBtn = document.getElementById('remove-last');
 let queryField = document.getElementById('query');
 let vocTable = document.getElementById('voc-table');
+let getDefBtn = document.getElementById('get-def');
+let outputEl = document.getElementById('output');
+
 // storage
 let deEnStorage = window.localStorage;
+
+let arrayOfEntries = [];
+for (key of Object.keys(deEnStorage)) {
+    arrayOfEntries.push(key);
+    arrayOfEntries.push(deEnStorage[key]);
+}
 
 /* --- EVENT LISTENERS ---*/
 
@@ -131,15 +161,13 @@ window.onload = () => {
 }
 */
 
+removeLastBtn.onclick = handleRemoveLastEntry(vocTable, deEnStorage);
+queryField.onkeydown = handleQueryField(vocTable);
+deField.onkeydown = handleInputFields(vocTable);
+enField.onkeydown = handleInputFields(vocTable);
+getDefBtn.onclick = getDef(enField, outputEl);
+
 /* --- ACTION --- */
-
-addEventListeners();
-
-let arrayOfEntries = [];
-for (key of Object.keys(deEnStorage)) {
-    arrayOfEntries.push(key);
-    arrayOfEntries.push(deEnStorage[key]);
-}
 
 addContentToTable(vocTable, 2, ...arrayOfEntries);
 /*
