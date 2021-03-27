@@ -95,32 +95,71 @@ function handleRemoveLastEntry(table, storage) {
 	}
 }
 
-function getDef(inputEl, outputEl) {
+function getDefEn(inputEl, outputEl) {
 	return function(evt) {
 		
-		// url
-		let word = inputEl.value;
-		let url = new URL(`https://owlbot.info/api/v4/dictionary/${word}`);
-		//url.search = '?l=deen&q=house';
-		// headers
-		let reqHeaders = new Headers();
-		reqHeaders.append("Authorization", "Token a538a3211dc031d3847a2c70484fc8b32ab0d9eb");
-		// request
-		//let req = new Request(url, reqOptions);
-		// fetch
-		fetch(url, {headers: reqHeaders})
-			.then(response => {
-				//if (!response.ok) throw new Error(`Failed to fetch: ${response}`);
-				console.log('response.type: ', response.type);
-				return response.json()
-			})
-			.then(data => {
-				let def = data.definitions[0].definition;
-				outputEl.textContent = def;
-			})
-			.catch(err => {
-				console.warn(err.stack);
-			})
+		if (!evt.target.checked) {
+			outputEl.style.display = "none"
+		}
+		if (evt.target.checked) {
+			outputEl.style.display = "block"
+		
+			// url
+			let word = inputEl.value;
+			let url = new URL(`https://owlbot.info/api/v4/dictionary/${word}`);
+			// headers
+			let reqHeaders = new Headers();
+			reqHeaders.append("Authorization", "Token a538a3211dc031d3847a2c70484fc8b32ab0d9eb");
+			// request
+			//let req = new Request(url, reqOptions);
+			// fetch
+			fetch(url, {headers: reqHeaders})
+				.then(response => {
+					if (!response.ok) throw new Error(`Failed to fetch: ${response}`);
+					console.log('response.type: ', response.type);
+					return response.json()
+				})
+				.then(data => {
+					let def = data.definitions[0].definition;
+					outputEl.textContent = def;
+				})
+				.catch(err => {
+					console.warn(err.stack);
+				})
+		}
+	}
+}
+
+function getDefDe(inputEl, outputEl) {
+	return function(evt) {
+		
+		if (!evt.target.checked) {
+			outputEl.style.display = "none"
+		}
+		if (evt.target.checked) {
+			outputEl.style.display = "block"
+			// url
+			let word = inputEl.value;
+			let url = new URL(`https://de.wikipedia.org/api/rest_v1/page/summary/${word}`);
+			// headers
+			//let reqHeaders = new Headers();
+			//reqHeaders.append("Authorization", "Token a538a3211dc031d3847a2c70484fc8b32ab0d9eb");
+			// request
+			//let req = new Request(url, reqOptions);
+			// fetch
+			fetch(url)
+				.then(response => {
+					if (!response.ok) throw new Error(`Failed to fetch: ${response}`);
+					return response.json()
+				})
+				.then(data => {
+					let def = data.extract;
+					outputEl.textContent = def;
+				})
+				.catch(err => {
+					console.warn(err.stack);
+				})
+		}
 	}
 }
 
@@ -138,8 +177,10 @@ let enField = document.getElementById('en')
 let removeLastBtn = document.getElementById('remove-last');
 let queryField = document.getElementById('query');
 let vocTable = document.getElementById('voc-table');
-let getDefBtn = document.getElementById('get-def');
-let outputEl = document.getElementById('output');
+let getDefDeBtn = document.getElementById('get-def-de');
+let getDefEnBtn = document.getElementById('get-def-en');
+let defEnEl = document.getElementById('def-en');
+let defDeEl = document.getElementById('def-de');
 
 // storage
 let deEnStorage = window.localStorage;
@@ -165,7 +206,8 @@ removeLastBtn.onclick = handleRemoveLastEntry(vocTable, deEnStorage);
 queryField.onkeydown = handleQueryField(vocTable);
 deField.onkeydown = handleInputFields(vocTable);
 enField.onkeydown = handleInputFields(vocTable);
-getDefBtn.onclick = getDef(enField, outputEl);
+getDefDeBtn.oninput = getDefDe(deField, defDeEl);
+getDefEnBtn.oninput = getDefEn(enField, defEnEl);
 
 /* --- ACTION --- */
 
